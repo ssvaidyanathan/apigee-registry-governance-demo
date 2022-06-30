@@ -4,6 +4,7 @@
   "description": "Apigee Registry Governance Demo",
   "main": "index.js",
   "scripts": {
+    "lint": "spectral lint translate-v3beta1-openapi.yaml",
     "test": "npm run test"
   },
   "repository": {
