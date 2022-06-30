@@ -1,0 +1,26 @@
+{
+  "name": "apigee-registry-governance-demo",
+  "version": "1.0.0",
+  "description": "Apigee Registry Governance Demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssvaidyanathan/apigee-registry-governance-demo.git"
+  },
+  "keywords": [
+    "Apigee",
+    "Registry"
+  ],
+  "author": "Sai Saran Vaidyanathan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ssvaidyanathan/apigee-registry-governance-demo/issues"
+  },
+  "homepage": "https://github.com/ssvaidyanathan/apigee-registry-governance-demo#readme",
+  "dependencies": {
+    "@stoplight/spectral-cli": "^6.4.1"
+  }
+}

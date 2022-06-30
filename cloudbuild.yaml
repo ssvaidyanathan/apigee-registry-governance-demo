@@ -1,0 +1,62 @@
+steps:
+- id: "Authenticate to gcloud"
+  name: gcr.io/cloud-builders/gcloud
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      gcloud auth application-default print-access-token > /workspace/creds
+
+- id: "Run linting"
+  name: 'ghcr.io/apigee/registry-tools:latest'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      registry rpc get-api-deployment --name=$_API_DEPLOYMENT_NAME -j > /workspace/build_vars
+
+
+
+
+
+
+- id: "Get API Deployment from Hub"
+  name: 'ghcr.io/apigee/registry-tools:latest'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      registry rpc get-api-deployment --name=$_API_DEPLOYMENT_NAME -j > /workspace/build_vars
+- id: "Store API Deployment variable"
+  name: gcr.io/cloud-builders/git
+  entrypoint: /bin/bash
+  args:
+    - -c
+    - |
+      apt update && apt install jq -y
+      echo $(cat /workspace/build_vars) | jq '.apiSpecRevision' -r > /workspace/build_spec_revision
+-  id: "Get Spec from Hub"
+   name: 'ghcr.io/apigee/registry-tools:latest'
+   entrypoint: /bin/bash
+   args:
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      registry rpc get-api-spec-contents --name=$(cat /workspace/build_spec_revision) -j > /workspace/build_spec
+- id: "Parse Spec Contents"
+  name: gcr.io/cloud-builders/git
+  entrypoint: /bin/bash
+  args:
+    - -c
+    - |
+      apt update && apt install jq -y && apt-get install coreutils -y
+      echo $(cat /workspace/build_spec) | jq ".data" -r | base64 -d  > /workspace/openapi.yaml
+- id: "Create API Proxy"
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: /bin/bash
+  args:
+    - -c
+    - |
+      docker run --volume /workspace:/workspace --user root gcr.io/$PROJECT_ID/apigeecli:latest apis create openapi -n $_API_DEPLOYMENT_ID -f /workspace/openapi.yaml --add-cors -o $PROJECT_ID -t $(cat /workspace/creds)
