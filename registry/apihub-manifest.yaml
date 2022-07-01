@@ -18,10 +18,20 @@ data:
     - pattern: apis/-/versions/-/specs/-/artifacts/score-receipt
       filter: ""
       receipt: true
-      refresh: 300s
+      dependencies:
+        - pattern: $resource.spec/artifacts/conformance-apihub-styleguide
+          filter: ""
+        - pattern: artifacts/apihub-lint-errors
+          filter: ""
       action: registry compute score $resource.spec
     - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-receipt
       filter: ""
       receipt: true
-      refresh: 300s
+      dependencies:
+        - pattern: $resource.spec/artifacts/score-lint-errors
+          filter: ""
+        - pattern: $resource.spec/artifacts/score-lint-warnings
+          filter: ""
+        - pattern: artifacts/apihub-lint-summary
+          filter: ""
       action: registry compute scorecard $resource.spec
