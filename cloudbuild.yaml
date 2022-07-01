@@ -44,7 +44,7 @@ steps:
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       #export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       #registry upload spec --style=openapi --version=projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1 openapi.yaml
-      registry rpc update-api-spec --api_spec.name=projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1/specs/openapi.yaml --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" --json
+      registry rpc update-api-spec --api_spec.name=projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1/specs/openapi.yaml --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" --json --allow_missing
 
 # - id: "Get API Deployment from Hub"
 #   name: 'ghcr.io/apigee/registry-linters:main'
