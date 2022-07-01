@@ -6,7 +6,7 @@ info:
     name: Google
     url: https://google.com
     x-twitter: youtube
-  description: Integrates text translation into your website or application.
+  #description: Integrates text translation into your website or application.
   license:
     name: Creative Commons Attribution 3.0
     url: http://creativecommons.org/licenses/by/3.0/
@@ -34,7 +34,7 @@ tags:
 paths:
   "/v3beta1/{name}":
     delete:
-      description: Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.
+      #description: Deletes a long-running operation. This method indicates that the client is no longer interested in the operation result. It does not cancel the operation. If the server doesn't support this method, it returns `google.rpc.Code.UNIMPLEMENTED`.
       operationId: translate.projects.locations.operations.delete
       parameters:
         - description: The name of the operation resource to be deleted.
@@ -1138,13 +1138,13 @@ components:
       properties:
         documentTranslation:
           $ref: "#/components/schemas/DocumentTranslation"
-          description: Translated document.
+          #description: Translated document.
         glossaryConfig:
           $ref: "#/components/schemas/TranslateTextGlossaryConfig"
-          description: The `glossary_config` used for this translation.
+          #description: The `glossary_config` used for this translation.
         glossaryDocumentTranslation:
           $ref: "#/components/schemas/DocumentTranslation"
-          description: The document's translation output if a glossary is provided in the request. This can be the same as [TranslateDocumentResponse.document_translation] if no glossary terms apply.
+          #description: The document's translation output if a glossary is provided in the request. This can be the same as [TranslateDocumentResponse.document_translation] if no glossary terms apply.
         model:
           description: "Only present when 'model' is present in the request. 'model' is normalized to have a project number. For example: If the 'model' field in TranslateDocumentRequest is: `projects/{project-id}/locations/{location-id}/models/general/nmt` then `model` here would be normalized to `projects/{project-number}/locations/{location-id}/models/general/nmt`."
           type: string
@@ -1169,7 +1169,7 @@ components:
           type: array
         glossaryConfig:
           $ref: "#/components/schemas/TranslateTextGlossaryConfig"
-          description: Optional. Glossary to be applied. The glossary must be within the same region (have the same location-id) as the model, otherwise an INVALID_ARGUMENT (400) error is returned.
+          #description: Optional. Glossary to be applied. The glossary must be within the same region (have the same location-id) as the model, otherwise an INVALID_ARGUMENT (400) error is returned.
         labels:
           additionalProperties:
             type: string
