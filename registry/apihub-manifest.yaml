@@ -1,7 +1,7 @@
 apiVersion: apigeeregistry/v1
 kind: Manifest
 metadata:
-  name: apihub-manifest
+  name: demo-manifest
 data:
   displayName: ""
   description: ""
@@ -15,13 +15,21 @@ data:
         - pattern: artifacts/apihub-styleguide
           filter: ""
       action: registry compute conformance $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/score-receipt
+    - pattern: apis/-/versions/-/specs/-/artifacts/score-lint-errors
       filter: ""
-      receipt: true
-      refresh: 300s
+      dependencies:
+        - pattern: $resource.spec/artifacts/conformance-apihub-styleguide
+          filter: ""
+        - pattern: artifacts/lint-errors
+          filter: ""
       action: registry compute score $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-receipt
+    - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-lint-summary
       filter: ""
-      receipt: true
-      refresh: 300s
+      dependencies:
+        - pattern: $resource.spec/artifacts/score-lint-errors
+          filter: ""
+        - pattern: $resource.spec/artifacts/score-lint-warnings
+          filter: ""
+        - pattern: artifacts/lint-summary
+          filter: ""
       action: registry compute scorecard $resource.spec

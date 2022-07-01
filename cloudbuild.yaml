@@ -68,11 +68,11 @@ steps:
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       # For generating lint results
-      registry resolve projects/$PROJECT_ID/locations/global/artifacts/apihub-manifest
+      registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest
       # For generating scores
-      registry resolve projects/$PROJECT_ID/locations/global/artifacts/apihub-manifest
+      registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest
       # For generating scorecards
-      registry resolve projects/$PROJECT_ID/locations/global/artifacts/apihub-manifest
+      registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest
 
 - id: "Fetch Spec scorecard and lint errors"
   name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
