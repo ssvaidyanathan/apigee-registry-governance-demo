@@ -6,7 +6,16 @@ data:
   displayName: ""
   description: ""
   generatedResources:
-    - pattern: apis/-/versions/-/specs/-/artifacts/score-receipt
+    - pattern: apis/-/versions/-/specs/-/artifacts/conformance-receipt
+      filter: ""
+      receipt: true
+      dependencies:
+        - pattern: $resource.spec
+          filter: ""
+        - pattern: artifacts/apihub-styleguide
+          filter: ""
+      action: registry compute conformance $resource.spec
+    - pattern: apis/-/versions/-/specs/-/artifacts/score-lint-errors
       filter: ""
       receipt: true
       dependencies:
@@ -15,7 +24,7 @@ data:
         - pattern: artifacts/apihub-lint-errors
           filter: ""
       action: registry compute score $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-receipt
+    - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-lint-summary
       filter: ""
       receipt: true
       dependencies:
@@ -26,12 +35,3 @@ data:
         - pattern: artifacts/apihub-lint-summary
           filter: ""
       action: registry compute scorecard $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/conformance-receipt
-      filter: ""
-      receipt: true
-      dependencies:
-        - pattern: $resource.spec
-          filter: ""
-        - pattern: artifacts/apihub-styleguide
-          filter: ""
-      action: registry compute conformance $resource.spec
