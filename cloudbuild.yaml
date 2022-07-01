@@ -25,7 +25,15 @@ steps:
     - -c
     - |
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
-      registry rpc update-api --api.name projects/$PROJECT_ID/locations/global/apis/petstore --api.display_name Petstore --allow_missing
+      registry rpc update-api --api.name projects/$PROJECT_ID/locations/global/apis/petstore \
+      --api.annotations "apihub-primary-contact=team@example.com" \
+      --api.annotations "apihub-primary-contact=Team email" \
+      --api.labels "apihub-business-unit=example" \
+      --api.labels "apihub-lifecycle=concept" \
+      --api.labels "apihub-style=apihub-openapi" \
+      --api.labels "apihub-target-users=public" \
+      --api.labels "apihub-team=example" \
+      --api.display_name Petstore --allow_missing
 
 - id: "Create/Update API Version in Registry"
   #name: 'ghcr.io/apigee/registry-linters:main'
@@ -45,7 +53,9 @@ steps:
     - -c
     - |
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
-      registry rpc update-api-spec --api_spec.filename=openapi.yaml --api_spec.name=projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" --json --allow_missing
+      registry rpc update-api-spec --api_spec.filename=openapi.yaml --api_spec.name=projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" --json --allow_missing > /workspace/spec_output
+      apt update && apt install jq -y
+      echo $(cat /workspace/spec_output) | jq '.revisionId' -r > /workspace/revisionId
 
 - id: "Update Registry Dependencies"
   #name: 'ghcr.io/apigee/registry-linters:main'
@@ -87,6 +97,14 @@ steps:
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/conformance-apihub-styleguide --contents
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/scorecard-lint-summary --contents
 
+- id: "Fetch Cloud Run endpoint"
+  name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      gcloud run services describe mockserver --format 'value(status.url)' --region=us-central1 > /workspace/cloudrunendpoint
+
 - id: "Create API Deployment"
   name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
@@ -96,7 +114,9 @@ steps:
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       registry rpc update-api-deployment \
       --api_deployment.name projects/$PROJECT_ID/locations/global/apis/petstore/deployments/mock-service \
-      --api_deployment.api_spec_revision projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml@latest \
+      --api_deployment.api_spec_revision projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml@$(cat /workspace/revisionId) \
       --api_deployment.display_name "Mock endpoint" \
-      --api_deployment.endpoint_uri "ENDPOINT" \
+      --api_deployment.endpoint_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml" \
+      --api_deployment.external_channel_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml" \
+      --api_deployment.annotations "apihub-external-channel-name=Mock" \
       --allow_missing
