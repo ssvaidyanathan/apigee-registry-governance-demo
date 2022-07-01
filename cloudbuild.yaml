@@ -12,10 +12,10 @@ steps:
   entrypoint: npm
   args: ['install', '--silent', '--no-fund']
 
-- id: "Static Code Analysis"
-  name: node:12
-  entrypoint: npm
-  args: ['run', 'lint']
+# - id: "Static Code Analysis"
+#   name: node:12
+#   entrypoint: npm
+#   args: ['run', 'lint']
 
 - id: "Create/Update API in Registry"
   name: 'ghcr.io/apigee/registry-linters:main'
