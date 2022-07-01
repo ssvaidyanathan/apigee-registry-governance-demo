@@ -29,7 +29,7 @@ steps:
       #Create API 
       registry rpc update-api --api.name projects/$PROJECT_ID/locations/global/apis/petstore \
       --api.annotations "apihub-primary-contact=team@example.com" \
-      --api.annotations "apihub-primary-contact=Team email" \
+      --api.annotations "apihub-primary-contact-description=Team email" \
       --api.labels "apihub-business-unit=example" \
       --api.labels "apihub-lifecycle=concept" \
       --api.labels "apihub-style=apihub-openapi" \
