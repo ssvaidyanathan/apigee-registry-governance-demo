@@ -13,7 +13,7 @@ steps:
   entrypoint: npm
   args: ['install', '--silent', '--no-fund']
 
-- id: "Static Code Analysis"
+- id: "API Standard Conformance Check"
   name: node:12
   entrypoint: npm
   args: ['run', 'lint']
