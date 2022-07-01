@@ -85,5 +85,5 @@ steps:
       --api_deployment.external_channel_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml" \
       --api_deployment.annotations "apihub-external-channel-name=Mock" \
       --api_deployment.intended_audience "This is a Mock endpoint" \
-      --api.deployment.labels "apihub-gateway=apihub-unmanaged" \
+      --api_deployment.labels "apihub-gateway=apihub-unmanaged" \
       --allow_missing
