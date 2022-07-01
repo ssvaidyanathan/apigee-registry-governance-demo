@@ -23,6 +23,14 @@ data:
         - pattern: artifacts/lint-errors
           filter: ""
       action: registry compute score $resource.spec
+    - pattern: apis/-/versions/-/specs/-/artifacts/score-lint-warnings
+      filter: ""
+      dependencies:
+        - pattern: $resource.spec/artifacts/conformance-apihub-styleguide
+          filter: ""
+        - pattern: artifacts/lint-warnings
+          filter: ""
+      action: registry compute score $resource.spec
     - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-lint-summary
       filter: ""
       dependencies:
