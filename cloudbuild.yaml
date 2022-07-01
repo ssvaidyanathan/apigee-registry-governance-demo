@@ -6,24 +6,46 @@ steps:
     - -c
     - |
       gcloud auth application-default print-access-token > /workspace/creds
+
 - id: "Install Dependencies"
   name: node:12
   entrypoint: npm
   args: ['install', '--silent', '--no-fund']
+
 - id: "Static Code Analysis"
   name: node:12
   entrypoint: npm
   args: ['run', 'lint']
-# - id: "Push spec to Apigee Registry"
-#   name: 'ghcr.io/apigee/registry-tools:latest'
-#   entrypoint: /bin/bash
-#   args: 
-#     - -c
-#     - |
-#       export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
-#       registry rpc get-api-deployment --name=$_API_DEPLOYMENT_NAME -j > /workspace/build_vars
+
+- id: "Create/Update API in Registry"
+  name: 'ghcr.io/apigee/registry-linters:main'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      registry rpc update-api --api.name projects/$PROJECT_ID/locations/global/apis/translate --api.display_name Translate --allow_missing
+
+- id: "Create/Update API Version in Registry"
+  name: 'ghcr.io/apigee/registry-linters:main'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      registry rpc update-api-version --api_version.name projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1 --api_version.display_name v3beta1 --allow_missing
+
+- id: "Create/Update API Version Spec in Registry"
+  name: 'ghcr.io/apigee/registry-linters:main'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      registry upload spec --style=openapi --version=projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1 openapi.yaml
+
 # - id: "Get API Deployment from Hub"
-#   name: 'ghcr.io/apigee/registry-tools:latest'
+#   name: 'ghcr.io/apigee/registry-linters:main'
 #   entrypoint: /bin/bash
 #   args: 
 #     - -c
