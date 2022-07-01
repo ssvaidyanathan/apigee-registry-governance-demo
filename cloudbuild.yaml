@@ -69,8 +69,10 @@ steps:
       export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       # For generating lint results
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest
+      sleep 5
       # For generating scores
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest
+      sleep 5
       # For generating scorecards
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest
 
