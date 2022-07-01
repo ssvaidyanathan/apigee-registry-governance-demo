@@ -35,6 +35,7 @@ steps:
       --api.labels "apihub-style=apihub-openapi" \
       --api.labels "apihub-target-users=public" \
       --api.labels "apihub-team=example" \
+      --api.description "Petstore API to manage Pets" \
       --api.display_name Petstore --allow_missing
       #Create API Version 
       registry rpc update-api-version --api_version.name \
