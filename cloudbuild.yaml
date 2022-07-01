@@ -86,4 +86,17 @@ steps:
       export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/conformance-apihub-styleguide --contents
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/scorecard-lint-summary --contents
-  
+
+- id: "Create API Deployment"
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
+  entrypoint: /bin/bash
+  args: 
+    - -c
+    - |
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
+      registry rpc update-api-deployment \
+      --api_deployment.name projects/$PROJECT_ID/locations/global/apis/petstore/deployments/mock-service \
+      --api_deployment.api_spec_revision projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml@latest \
+      --api_deployment.display_name "Mock endpoint" \
+      --api_deployment.endpoint_uri "ENDPOINT" \
+      --allow_missing
