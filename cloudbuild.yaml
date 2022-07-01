@@ -41,7 +41,8 @@ steps:
   args: 
     - -c
     - |
-      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
+      export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       registry upload spec --style=openapi --version=projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1 openapi.yaml
 
 # - id: "Get API Deployment from Hub"
