@@ -18,7 +18,8 @@ steps:
 #   args: ['run', 'lint']
 
 - id: "Create/Update API in Registry"
-  name: 'ghcr.io/apigee/registry-linters:main'
+  #name: 'ghcr.io/apigee/registry-linters:main'
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
     - -c
@@ -27,7 +28,8 @@ steps:
       registry rpc update-api --api.name projects/$PROJECT_ID/locations/global/apis/translate --api.display_name Translate --allow_missing
 
 - id: "Create/Update API Version in Registry"
-  name: 'ghcr.io/apigee/registry-linters:main'
+  #name: 'ghcr.io/apigee/registry-linters:main'
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
     - -c
@@ -36,7 +38,8 @@ steps:
       registry rpc update-api-version --api_version.name projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1 --api_version.display_name v3beta1 --allow_missing
 
 - id: "Create/Update API Version Spec in Registry"
-  name: 'ghcr.io/apigee/registry-linters:main'
+  #name: 'ghcr.io/apigee/registry-linters:main'
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
     - -c
@@ -45,7 +48,8 @@ steps:
       registry rpc update-api-spec --api_spec.name=projects/$PROJECT_ID/locations/global/apis/translate/versions/v3beta1/specs/openapi.yaml --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" --json --allow_missing
 
 - id: "Update Registry Dependencies"
-  name: 'ghcr.io/apigee/registry-linters:main'
+  #name: 'ghcr.io/apigee/registry-linters:main'
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
     - -c
@@ -55,7 +59,8 @@ steps:
       registry apply -f registry -R --parent=projects/$PROJECT_ID/locations/global
 
 - id: "Resolve Apigee Registry"
-  name: 'ghcr.io/apigee/registry-linters:main'
+  #name: 'ghcr.io/apigee/registry-linters:main'
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
     - -c
@@ -70,7 +75,7 @@ steps:
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/apihub-manifest
 
 - id: "Fetch Spec scorecard and lint errors"
-  name: 'ghcr.io/apigee/registry-linters:main'
+  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
     - -c
