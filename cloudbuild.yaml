@@ -24,7 +24,8 @@ steps:
   args: 
     - -c
     - |
-      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
+      export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
+      #Create API 
       registry rpc update-api --api.name projects/$PROJECT_ID/locations/global/apis/petstore \
       --api.annotations "apihub-primary-contact=team@example.com" \
       --api.annotations "apihub-primary-contact=Team email" \
@@ -34,30 +35,19 @@ steps:
       --api.labels "apihub-target-users=public" \
       --api.labels "apihub-team=example" \
       --api.display_name Petstore --allow_missing
-
-- id: "Create/Update API Version in Registry"
-  #name: 'ghcr.io/apigee/registry-linters:main'
-  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
-  entrypoint: /bin/bash
-  args: 
-    - -c
-    - |
-      export APG_REGISTRY_TOKEN=$(cat /workspace/creds) 
-      registry rpc update-api-version --api_version.name projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3 --api_version.display_name v3 --allow_missing
-
-- id: "Create/Update API Version Spec in Registry"
-  #name: 'ghcr.io/apigee/registry-linters:main'
-  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
-  entrypoint: /bin/bash
-  args: 
-    - -c
-    - |
-      export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
-      registry rpc update-api-spec --api_spec.filename=openapi.yaml --api_spec.name=projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" --json --allow_missing > /workspace/spec_output
+      #Create API Version 
+      registry rpc update-api-version --api_version.name \
+      projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3 --api_version.display_name v3 \
+      --allow_missing
+      #Create API Version Spec
+      registry rpc update-api-spec --api_spec.filename=openapi.yaml \
+      --api_spec.name=projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml \
+      --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" \
+      --json --allow_missing > /workspace/spec_output
       apt update && apt install jq -y
       echo $(cat /workspace/spec_output) | jq '.revisionId' -r > /workspace/revisionId
 
-- id: "Update Registry Dependencies"
+- id: "Fetch Spec scorecard and lint errors"
   #name: 'ghcr.io/apigee/registry-linters:main'
   name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
@@ -67,16 +57,6 @@ steps:
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       registry apply -f registry -R --parent=projects/$PROJECT_ID/locations/global
-
-- id: "Resolve Apigee Registry"
-  #name: 'ghcr.io/apigee/registry-linters:main'
-  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
-  entrypoint: /bin/bash
-  args: 
-    - -c
-    - |
-      export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
-      export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       # For generating lint results
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest --jobs 1
       sleep 5
@@ -85,25 +65,8 @@ steps:
       sleep 5
       # For generating scorecards
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest --jobs 1
-
-- id: "Fetch Spec scorecard and lint errors"
-  name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
-  entrypoint: /bin/bash
-  args: 
-    - -c
-    - |
-      export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
-      export APG_REGISTRY_ADDRESS=apigeeregistry.googleapis.com:443
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/conformance-apihub-styleguide --contents
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/scorecard-lint-summary --contents
-
-- id: "Fetch Cloud Run endpoint"
-  name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: /bin/bash
-  args: 
-    - -c
-    - |
-      gcloud run services describe mockserver --format 'value(status.url)' --region=us-central1 > /workspace/cloudrunendpoint
 
 - id: "Create API Deployment"
   name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
@@ -111,6 +74,7 @@ steps:
   args: 
     - -c
     - |
+      gcloud run services describe mockserver --format 'value(status.url)' --region=us-central1 > /workspace/cloudrunendpoint
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       registry rpc update-api-deployment \
       --api_deployment.name projects/$PROJECT_ID/locations/global/apis/petstore/deployments/mock-service \
