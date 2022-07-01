@@ -3,41 +3,41 @@ kind: StyleGuide
 metadata:
   name: apihub-styleguide
 data:
-  displayName: ""
+  displayName: "API Hub Styleguide"
   mimeTypes:
     - application/x.openapi+gzip;version=3
     - application/x.openapi+gzip;version=2
   guidelines:
     - id: RefProperties
-      displayName: Govern properties of $ref
-      description: ""
+      displayName: Ref Properties
+      description: Govern properties of $ref
       rules:
         - id: RefSiblings
-          displayName: ""
-          description: ""
+          displayName: "Ref Siblings"
+          description: "no $ref siblings allowed"
           linter: spectral
           linterRulename: no-$ref-siblings
           severity: ERROR
           docUri: https://meta.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#no-ref-siblings
       state: ACTIVE
     - id: OAS3Properties
-      displayName: Govern OAS3 properties
-      description: ""
+      displayName: OAS3 Properties
+      description: Govern OAS3 properties
       rules:
         - id: ServerTrailingSlash
-          displayName: ""
-          description: "Server URL should not have a trailing slash"
+          displayName: Server Trailing Slash
+          description: Server URL should not have a trailing slash
           linter: spectral
           linterRulename: oas3-server-trailing-slash
           severity: WARNING
           docUri: https://meta.stoplight.io/docs/spectral/4dec24461f3af-open-api-rules#oas3-server-trailing-slash
       state: ACTIVE
     - id: Operation
-      displayName: Govern properties of Operations
-      description: ""
+      displayName: Operation
+      description: Govern properties of Operations
       rules:
         - id: OperationIdValidInURL
-          displayName: ""
+          displayName: "OperationID Invalid in URL"
           description: |
             Seeing as operationId is often used for unique URLs in documentation systems, it's a good idea to avoid non-URL safe characters."
           linter: spectral
