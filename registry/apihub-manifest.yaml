@@ -15,29 +15,11 @@ data:
         - pattern: artifacts/apihub-styleguide
           filter: ""
       action: registry compute conformance $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/score-lint-errors
+    - pattern: apis/-/versions/-/specs/-/artifacts/score-receipt
       filter: ""
-      dependencies:
-        - pattern: $resource.spec/artifacts/conformance-apihub-styleguide
-          filter: ""
-        - pattern: artifacts/lint-errors
-          filter: ""
+      refresh: 1s
       action: registry compute score $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/score-lint-warnings
+    - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-receipt
       filter: ""
-      dependencies:
-        - pattern: $resource.spec/artifacts/conformance-apihub-styleguide
-          filter: ""
-        - pattern: artifacts/lint-warnings
-          filter: ""
-      action: registry compute score $resource.spec
-    - pattern: apis/-/versions/-/specs/-/artifacts/scorecard-lint-summary
-      filter: ""
-      dependencies:
-        - pattern: $resource.spec/artifacts/score-lint-errors
-          filter: ""
-        - pattern: $resource.spec/artifacts/score-lint-warnings
-          filter: ""
-        - pattern: artifacts/lint-summary
-          filter: ""
+      refresh: 1s
       action: registry compute scorecard $resource.spec
