@@ -6,6 +6,7 @@ steps:
     - -c
     - |
       gcloud auth application-default print-access-token > /workspace/creds
+      gcloud run services describe mockserver --format 'value(status.url)' --region=us-central1 > /workspace/cloudrunendpoint
 
 - id: "Install Dependencies"
   name: node:12
@@ -74,7 +75,6 @@ steps:
   args: 
     - -c
     - |
-      gcloud run services describe mockserver --format 'value(status.url)' --region=us-central1 > /workspace/cloudrunendpoint
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       registry rpc update-api-deployment \
       --api_deployment.name projects/$PROJECT_ID/locations/global/apis/petstore/deployments/mock-service \
