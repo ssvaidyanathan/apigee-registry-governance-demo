@@ -106,7 +106,7 @@ data:
             Info object must have "contact" object. Hopefully your API description document is so good that nobody ever needs to contact you with questions, but that is rarely the case. The contact object has a few different options for contact details.
           linter: spectral
           linterRulename: info-contact
-          severity: ERROR
+          severity: WARNING
           docUri: https://meta.stoplight.io/docs/spectral/ZG9jOjExNw-open-api-rules#info-contact
         - id: InfoDescriptionRequired
           displayName: ""
