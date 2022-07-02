@@ -70,7 +70,7 @@ steps:
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/conformance-apihub-styleguide --contents
       registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/scorecard-lint-summary --contents
 
-- id: "Create API Deployment"
+- id: "Create/Update API Deployment"
   name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
   entrypoint: /bin/bash
   args: 
