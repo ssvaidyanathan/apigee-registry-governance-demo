@@ -39,11 +39,11 @@ steps:
       --api.display_name Petstore --allow_missing
       #Create API Version 
       registry rpc update-api-version --api_version.name \
-      projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3 --api_version.display_name v3 \
+      projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1 --api_version.display_name v1 \
       --allow_missing
       #Create API Version Spec
       registry rpc update-api-spec --api_spec.filename=openapi.yaml \
-      --api_spec.name=projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml \
+      --api_spec.name=projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1/specs/openapi.yaml \
       --api_spec.contents `cat openapi.yaml | gzip --stdout | xxd -p | tr -d '\n'` --api_spec.mime_type "application/x.openapi+gzip;version=3" \
       --json --allow_missing > /workspace/spec_output
       apt update && apt install jq -y
@@ -67,8 +67,8 @@ steps:
       sleep 5
       # For generating scorecards
       registry resolve projects/$PROJECT_ID/locations/global/artifacts/demo-manifest --jobs 1
-      registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/conformance-apihub-styleguide --contents
-      registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml/artifacts/scorecard-lint-summary --contents
+      registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1/specs/openapi.yaml/artifacts/conformance-apihub-styleguide --contents
+      registry get projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1/specs/openapi.yaml/artifacts/scorecard-lint-summary --contents
 
 - id: "Create/Update API Deployment"
   name: 'gcr.io/$PROJECT_ID/custom-linter:latest'
@@ -79,10 +79,10 @@ steps:
       export APG_REGISTRY_TOKEN=$(cat /workspace/creds)
       registry rpc update-api-deployment \
       --api_deployment.name projects/$PROJECT_ID/locations/global/apis/petstore/deployments/mock-service \
-      --api_deployment.api_spec_revision projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml@$(cat /workspace/revisionId) \
+      --api_deployment.api_spec_revision projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1/specs/openapi.yaml@$(cat /workspace/revisionId) \
       --api_deployment.display_name "Mock endpoint" \
-      --api_deployment.endpoint_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml" \
-      --api_deployment.external_channel_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v3/specs/openapi.yaml" \
+      --api_deployment.endpoint_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1/specs/openapi.yaml" \
+      --api_deployment.external_channel_uri "$(cat /workspace/cloudrunendpoint)/projects/$PROJECT_ID/locations/global/apis/petstore/versions/v1/specs/openapi.yaml" \
       --api_deployment.annotations "apihub-external-channel-name=Mock" \
       --api_deployment.intended_audience "This is a Mock endpoint" \
       --api_deployment.labels "apihub-gateway=apihub-unmanaged" \
